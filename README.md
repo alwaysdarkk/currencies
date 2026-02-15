@@ -26,6 +26,7 @@ The plugin generates a `config.json` file during initialization that contains th
 - Id: Id of currency to general use in plugin
 - Name: Name displayed in plugin messages.
 - Color: Color displayed in plugin messages.
+- DefaultAmount: Initial balance amount that the player has of this currency.
 - IsPayEnable: Determines whether players will be able to use the pay command.
 
 ## Repository field:
