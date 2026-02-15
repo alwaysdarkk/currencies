@@ -1,0 +1,13 @@
+{
+  "Group": "alwaysdarkk",
+  "Name": "${name}",
+  "Version": "${version}",
+  "Description": "Create many currencies as you want with this plugin.",
+  "Authors": [
+    {
+      "Name": "alwaysdarkk"
+    }
+  ],
+  "Main": "com.github.alwaysdarkk.currencies.CurrenciesPlugin",
+  "IncludesAssetPack": true
+}

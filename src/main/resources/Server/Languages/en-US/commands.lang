@@ -1,0 +1,13 @@
+errors.currency.only-player = Only players can execute this command.
+errors.currency.player-not-found = Player not found.
+errors.currency.invalid-amount = The amount entered is invalid.
+errors.currency.pay-disable = The pay command is disable for this currency.
+errors.currency.same-player = You cannot use this command on yourself.
+
+currency.player-balance = Your balance is {balance} {currency-name}
+currency.target-balance = Balance of {player} is {balance} {currency-name}
+currency.add-balance = You added {amount} {currency-name} to {player} balance.
+currency.remove-balance = You removed {amount} {currency-name} of {player} balance.
+currency.set-balance = You have set {player} balance to {amount} {currency-name}.
+currency.player-pay = You sent {amount} {currency-name} to {player}.
+currency.target-pay = You received {amount} {currency-name} of {player}.

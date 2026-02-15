@@ -1,0 +1,15 @@
+[versions]
+hytale-server = "2026.02.06-aa1b071c2"
+lombok = "1.18.42"
+hibernate = "7.2.4.Final"
+hikaricp = "7.0.2"
+mysql = "9.6.0"
+h2 = "2.4.240"
+
+[libraries]
+hytale-server = { module = "com.hypixel.hytale:Server", version.ref = "hytale-server" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+hibernate = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibernate" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
