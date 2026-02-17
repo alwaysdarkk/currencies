@@ -1,5 +1,7 @@
 package com.github.alwaysdarkk.currencies.repository;
 
+import com.github.alwaysdarkk.currencies.data.currency.Currency;
+import com.github.alwaysdarkk.currencies.data.user.CurrencyLeaderboardUser;
 import com.github.alwaysdarkk.currencies.data.user.CurrencyUser;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,6 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 public class CurrencyUserRepository {
 
@@ -27,14 +30,13 @@ public class CurrencyUserRepository {
     public @Nonnull CompletableFuture<Void> bulkInsert(@Nonnull Collection<CurrencyUser> users) {
         final List<CurrencyUser> dirtyUsers =
                 users.stream().filter(CurrencyUser::isDirty).toList();
-
         if (dirtyUsers.isEmpty()) {
             return CompletableFuture.completedFuture(null);
         }
 
         return CompletableFuture.runAsync(
                 () -> {
-                    try (Session session = sessionFactory.openSession()) {
+                    try (Session session = this.sessionFactory.openSession()) {
                         final Transaction transaction = session.beginTransaction();
                         try {
                             int savedCount = 0;
@@ -65,8 +67,32 @@ public class CurrencyUserRepository {
     public @Nonnull CompletableFuture<Optional<CurrencyUser>> find(@Nonnull UUID id) {
         return CompletableFuture.supplyAsync(
                 () -> {
-                    try (Session session = sessionFactory.openSession()) {
+                    try (Session session = this.sessionFactory.openSession()) {
                         return Optional.ofNullable(session.find(CurrencyUser.class, id));
+                    }
+                },
+                this.executorService);
+    }
+
+    public @Nonnull CompletableFuture<List<CurrencyLeaderboardUser>> findLeaderboard(@Nonnull Currency currency) {
+        return CompletableFuture.supplyAsync(
+                () -> {
+                    try (Session session = this.sessionFactory.openSession()) {
+                        final String query = "SELECT u FROM CurrencyUser u " + "JOIN u.currencyMap m "
+                                + "WHERE KEY(m) = :currencyId "
+                                + "ORDER BY m DESC";
+                        final List<CurrencyUser> users = session.createQuery(query, CurrencyUser.class)
+                                .setParameter("currencyId", currency.getId())
+                                .setMaxResults(10)
+                                .getResultList();
+
+                        return IntStream.range(0, users.size())
+                                .mapToObj(index -> {
+                                    final CurrencyUser user = users.get(index);
+                                    return new CurrencyLeaderboardUser(
+                                            user.getId(), user.getUsername(), index + 1, user.getAmount(currency));
+                                })
+                                .toList();
                     }
                 },
                 this.executorService);

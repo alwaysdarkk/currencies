@@ -8,7 +8,6 @@ import com.github.alwaysdarkk.currencies.util.NumberUtil;
 import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
@@ -17,6 +16,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import fi.sulku.hytale.TinyMsg;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
@@ -49,7 +49,8 @@ public class CurrencyPaySubCommand extends AbstractAsyncCommand {
     @Override
     protected CompletableFuture<Void> executeAsync(@Nonnull CommandContext commandContext) {
         if (!commandContext.isPlayer()) {
-            commandContext.sendMessage(MessagesConfig.ONLY_PLAYER);
+            final String message = MessagesConfig.ONLY_PLAYER.getAnsiMessage();
+            commandContext.sendMessage(TinyMsg.parse(message));
             return CompletableFuture.completedFuture(null);
         }
 
@@ -75,46 +76,54 @@ public class CurrencyPaySubCommand extends AbstractAsyncCommand {
             }
 
             if (!currency.isPayEnable()) {
-                playerRef.sendMessage(MessagesConfig.PAY_DISABLE);
+                final String message = MessagesConfig.PAY_DISABLE.getAnsiMessage();
+                playerRef.sendMessage(TinyMsg.parse(message));
                 return;
             }
 
             final PlayerRef targetRef = commandContext.get(this.targetArg);
             if (targetRef == null) {
-                playerRef.sendMessage(MessagesConfig.PLAYER_NOT_FOUND);
+                final String message = MessagesConfig.PLAYER_NOT_FOUND.getAnsiMessage();
+                playerRef.sendMessage(TinyMsg.parse(message));
                 return;
             }
 
             if (targetRef.getUuid() == playerRef.getUuid()) {
-                playerRef.sendMessage(MessagesConfig.SAME_PLAYER);
+                final String message = MessagesConfig.SAME_PLAYER.getAnsiMessage();
+                playerRef.sendMessage(TinyMsg.parse(message));
                 return;
             }
 
-            final CurrencyUser targetUser = this.userCache.find(playerRef.getUuid());
+            final CurrencyUser targetUser = this.userCache.find(targetRef.getUuid());
             if (targetUser == null) {
                 return;
             }
 
             final double amount = this.amountArg.get(commandContext);
             if (NumberUtil.isInvalid(amount) || amount > user.getAmount(currency)) {
-                commandContext.sendMessage(MessagesConfig.INVALID_AMOUNT);
+                final String message = MessagesConfig.INVALID_AMOUNT.getAnsiMessage();
+                commandContext.sendMessage(TinyMsg.parse(message));
                 return;
             }
 
             user.removeAmount(currency, amount);
             targetUser.addAmount(currency, amount);
 
-            final Message playerMessage = MessagesConfig.PLAYER_PAY.color(currency.getColor())
+            final String playerMessage = MessagesConfig.PLAYER_PAY
+                    .param("color", currency.getColor())
                     .param("player", targetRef.getUsername())
                     .param("amount", NumberUtil.formatWithSuffix(amount))
-                    .param("currency-name", currency.getName());
-            playerRef.sendMessage(playerMessage);
+                    .param("currency-name", currency.getName())
+                    .getAnsiMessage();
+            playerRef.sendMessage(TinyMsg.parse(playerMessage));
 
-            final Message targetMessage = MessagesConfig.PLAYER_PAY.color(currency.getColor())
+            final String targetMessage = MessagesConfig.TARGET_PAY
+                    .param("color", currency.getColor())
                     .param("player", playerRef.getUsername())
                     .param("amount", NumberUtil.formatWithSuffix(amount))
-                    .param("currency-name", currency.getName());
-            targetRef.sendMessage(targetMessage);
+                    .param("currency-name", currency.getName())
+                    .getAnsiMessage();
+            targetRef.sendMessage(TinyMsg.parse(targetMessage));
         });
 
         return CompletableFuture.completedFuture(null);

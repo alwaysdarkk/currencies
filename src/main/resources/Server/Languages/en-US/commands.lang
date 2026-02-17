@@ -1,13 +1,17 @@
-errors.currency.only-player = Only players can execute this command.
-errors.currency.player-not-found = Player not found.
-errors.currency.invalid-amount = The amount entered is invalid.
-errors.currency.pay-disable = The pay command is disable for this currency.
-errors.currency.same-player = You cannot use this command on yourself.
+errors.currency.only-player = <color:red>Only players can execute this command.</color>
+errors.currency.player-not-found = <color:red>Player not found.</color>
+errors.currency.invalid-amount = <color:red>The amount entered is invalid.</color>
+errors.currency.pay-disable = <color:red>The pay command is disable for this currency.</color>
+errors.currency.same-player = <color:red>You cannot use this command on yourself.</color>
 
-currency.player-balance = Your balance is {balance} {currency-name}
-currency.target-balance = Balance of {player} is {balance} {currency-name}
-currency.add-balance = You added {amount} {currency-name} to {player} balance.
-currency.remove-balance = You removed {amount} {currency-name} of {player} balance.
-currency.set-balance = You have set {player} balance to {amount} {currency-name}.
-currency.player-pay = You sent {amount} {currency-name} to {player}.
-currency.target-pay = You received {amount} {currency-name} of {player}.
+currency.player-balance = <color:{color}>Your balance is {balance} {currency-name}</color>
+currency.target-balance = <color:{color}>Balance of {player} is {balance} {currency-name}</color>
+currency.add-balance = <color:{color}>You added {amount} {currency-name} to {player} balance.</color>
+currency.remove-balance = <color:{color}>You removed {amount} {currency-name} of {player} balance.</color>
+currency.set-balance = <color:{color}>You have set {player} balance to {amount} {currency-name}.</color>
+currency.player-pay = <color:{color}>You sent {amount} {currency-name} to {player}.</color>
+currency.target-pay = <color:{color}>You received {amount} {currency-name} of {player}.</color>
+
+currency.leaderboard-header = <color:{color}> Ranking of {currency-name}\n\n</color>
+currency.leaderboard-user-format = <color:white> {position}º {player}:</color> <color:{color}>{amount} {currency-name}\n</color>
+currency.leaderboard-footer = <color:gray>\n Updated every 10 minutes</color>

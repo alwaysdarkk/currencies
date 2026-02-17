@@ -5,6 +5,7 @@ hibernate = "7.2.4.Final"
 hikaricp = "7.0.2"
 mysql = "9.6.0"
 h2 = "2.4.240"
+tinymessage = "2.0.1"
 
 [libraries]
 hytale-server = { module = "com.hypixel.hytale:Server", version.ref = "hytale-server" }
@@ -13,3 +14,4 @@ hibernate = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibern
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
 mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
+tinymessage = { module = "com.github.Zoltus:TinyMessage", version.ref = "tinymessage" }

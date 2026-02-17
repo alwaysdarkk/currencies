@@ -5,12 +5,12 @@ import com.github.alwaysdarkk.currencies.data.user.CurrencyUser;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CurrencyUserCache {
-    private final Map<UUID, CurrencyUser> userMap = new HashMap<>();
+    private final ConcurrentMap<UUID, CurrencyUser> userMap = new ConcurrentHashMap<>();
 
     public void insert(@Nonnull CurrencyUser user) {
         this.userMap.put(user.getId(), user);
@@ -20,7 +20,7 @@ public class CurrencyUserCache {
         this.userMap.remove(user.getId());
     }
 
-    public @Nullable CurrencyUser find(UUID uuid) {
+    public @Nullable CurrencyUser find(@Nonnull UUID uuid) {
         return this.userMap.get(uuid);
     }
 

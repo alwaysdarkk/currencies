@@ -5,11 +5,11 @@ import com.github.alwaysdarkk.currencies.data.currency.Currency;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CurrencyCache {
-    private final Map<String, Currency> currencyMap = new HashMap<>();
+    private final ConcurrentMap<String, Currency> currencyMap = new ConcurrentHashMap<>();
 
     public void insert(@Nonnull Currency currency) {
         this.currencyMap.put(currency.getId(), currency);

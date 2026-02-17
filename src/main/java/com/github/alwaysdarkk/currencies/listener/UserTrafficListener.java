@@ -20,12 +20,17 @@ public class UserTrafficListener {
         final PlayerRef playerRef = event.getPlayerRef();
         this.userRepository.find(playerRef.getUuid()).thenAccept(optionalUser -> {
             if (optionalUser.isEmpty()) {
-                final CurrencyUser user = new CurrencyUser(playerRef.getUuid());
+                final CurrencyUser user = new CurrencyUser(playerRef.getUuid(), playerRef.getUsername());
                 this.userCache.insert(user);
                 return;
             }
 
             final CurrencyUser user = optionalUser.get();
+            if (!user.getUsername().equals(playerRef.getUsername())) {
+                user.setUsername(playerRef.getUsername());
+                user.setDirty(true);
+            }
+
             this.userCache.insert(user);
         });
     }

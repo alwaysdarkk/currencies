@@ -4,12 +4,13 @@ plugins {
 }
 
 group = "com.github.alwaysdarkk"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
 
     maven(url = "https://maven.hytale.com/release")
+    maven(url = "https://jitpack.io")
 }
 
 dependencies {
@@ -19,6 +20,8 @@ dependencies {
     implementation(libs.hikaricp)
     implementation(libs.mysql)
     implementation(libs.h2)
+
+    implementation(libs.tinymessage)
 
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)

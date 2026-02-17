@@ -1,6 +1,7 @@
 package com.github.alwaysdarkk.currencies;
 
 import com.github.alwaysdarkk.currencies.cache.CurrencyCache;
+import com.github.alwaysdarkk.currencies.cache.CurrencyLeaderboardCache;
 import com.github.alwaysdarkk.currencies.cache.CurrencyUserCache;
 import com.github.alwaysdarkk.currencies.command.CurrencyCommand;
 import com.github.alwaysdarkk.currencies.config.MainConfig;
@@ -9,11 +10,14 @@ import com.github.alwaysdarkk.currencies.listener.UserTrafficListener;
 import com.github.alwaysdarkk.currencies.repository.CurrencyUserRepository;
 import com.github.alwaysdarkk.currencies.repository.factory.RepositoryFactory;
 import com.github.alwaysdarkk.currencies.repository.settings.RepositorySettings;
+import com.github.alwaysdarkk.currencies.runnable.CurrencyLeaderboardUpdateRunnable;
+import com.github.alwaysdarkk.currencies.runnable.CurrencyUserSaveRunnable;
 import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import com.hypixel.hytale.server.core.task.TaskRegistry;
 import com.hypixel.hytale.server.core.util.Config;
 import lombok.Getter;
 import org.hibernate.SessionFactory;
@@ -37,6 +41,8 @@ public class CurrenciesPlugin extends JavaPlugin {
     private CurrencyUserRepository userRepository;
 
     private CurrencyCache currencyCache;
+    private CurrencyLeaderboardCache leaderboardCache;
+
     private ScheduledExecutorService executorService;
 
     public CurrenciesPlugin(@Nonnull JavaPluginInit init) {
@@ -54,13 +60,15 @@ public class CurrenciesPlugin extends JavaPlugin {
 
         this.userCache = new CurrencyUserCache();
         this.currencyCache = new CurrencyCache();
+        this.leaderboardCache = new CurrencyLeaderboardCache();
 
         this.mainConfig.save();
 
         final MainConfig config = this.mainConfig.get();
         for (Currency currency : config.getCurrencies()) {
             this.currencyCache.insert(currency);
-            this.getCommandRegistry().registerCommand(new CurrencyCommand(currency, this.userCache));
+            this.getCommandRegistry().registerCommand(
+                    new CurrencyCommand(currency, this.userCache, this.leaderboardCache));
         }
 
         final RepositorySettings repositorySettings = config.getRepositorySettings();
@@ -77,9 +85,19 @@ public class CurrenciesPlugin extends JavaPlugin {
 
         this.executorService = Executors.newSingleThreadScheduledExecutor();
 
-        final ScheduledFuture<Void> scheduledTask = (ScheduledFuture<Void>) this.executorService.scheduleAtFixedRate(
-                () -> this.userRepository.bulkInsert(this.userCache.findAll()), 1, 1, TimeUnit.SECONDS);
-        this.getTaskRegistry().registerTask(scheduledTask);
+        final ScheduledFuture<Void> userSaveTask = (ScheduledFuture<Void>) this.executorService.scheduleAtFixedRate(
+                new CurrencyUserSaveRunnable(this.userRepository, this.userCache), 1, 1, TimeUnit.SECONDS);
+        final ScheduledFuture<Void> leaderboardUpdateTask =
+                (ScheduledFuture<Void>) this.executorService.scheduleAtFixedRate(
+                        new CurrencyLeaderboardUpdateRunnable(
+                                this.currencyCache, this.userRepository, this.leaderboardCache),
+                        0,
+                        10,
+                        TimeUnit.MINUTES);
+
+        final TaskRegistry taskRegistry = this.getTaskRegistry();
+        taskRegistry.registerTask(userSaveTask);
+        taskRegistry.registerTask(leaderboardUpdateTask);
     }
 
     @Override

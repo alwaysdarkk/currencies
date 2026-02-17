@@ -22,6 +22,9 @@ public class CurrencyUser {
     @Column(length = 16, columnDefinition = "BINARY(16)")
     private UUID id;
 
+    @Column(nullable = false, length = 16)
+    private String username;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "user_currencies",
@@ -35,8 +38,9 @@ public class CurrencyUser {
     @Transient
     private boolean dirty = false;
 
-    public CurrencyUser(@Nonnull UUID id) {
+    public CurrencyUser(@Nonnull UUID id, @Nonnull String username) {
         this.id = id;
+        this.username = username;
         this.currencyMap = new HashMap<>();
         this.dirty = true;
     }

@@ -6,12 +6,12 @@ import com.github.alwaysdarkk.currencies.data.currency.Currency;
 import com.github.alwaysdarkk.currencies.data.user.CurrencyUser;
 import com.github.alwaysdarkk.currencies.util.NumberUtil;
 import com.hypixel.hytale.codec.validation.Validators;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
+import fi.sulku.hytale.TinyMsg;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
@@ -42,7 +42,8 @@ public class CurrencyAddSubCommand extends AbstractAsyncCommand {
     protected CompletableFuture<Void> executeAsync(@Nonnull CommandContext commandContext) {
         final PlayerRef playerRef = commandContext.get(this.targetArg);
         if (playerRef == null) {
-            commandContext.sendMessage(MessagesConfig.PLAYER_NOT_FOUND);
+            final String message = MessagesConfig.PLAYER_NOT_FOUND.getAnsiMessage();
+            commandContext.sendMessage(TinyMsg.parse(message));
             return CompletableFuture.completedFuture(null);
         }
 
@@ -53,17 +54,20 @@ public class CurrencyAddSubCommand extends AbstractAsyncCommand {
 
         final double amount = this.amountArg.get(commandContext);
         if (NumberUtil.isInvalid(amount)) {
-            commandContext.sendMessage(MessagesConfig.INVALID_AMOUNT);
+            final String message = MessagesConfig.INVALID_AMOUNT.getAnsiMessage();
+            commandContext.sendMessage(TinyMsg.parse(message));
             return CompletableFuture.completedFuture(null);
         }
 
         user.addAmount(currency, amount);
 
-        final Message message = MessagesConfig.ADD_BALANCE.color(currency.getColor())
+        final String message = MessagesConfig.ADD_BALANCE
+                .param("color", currency.getColor())
                 .param("player", playerRef.getUsername())
                 .param("amount", NumberUtil.formatWithSuffix(amount))
-                .param("currency-name", currency.getName());
-        commandContext.sendMessage(message);
+                .param("currency-name", currency.getName())
+                .getAnsiMessage();
+        commandContext.sendMessage(TinyMsg.parse(message));
 
         return CompletableFuture.completedFuture(null);
     }
