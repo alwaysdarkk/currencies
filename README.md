@@ -69,6 +69,7 @@ The plugin generates a `config.json` file during initialization that contains th
 ## Commands and permissions
 - /{currency-id} [player] - Shows your or a player balance.
 - /{currency-id} pay {player} {amount} - Send balance for a player.
+- /{currency-id} top - Shows the player ranking for this currency.
 - /{currency-id} add {player} {amount} - Add balance for a player. (currencies.commands.add)
 - /{currency-id} remove {player} {amount} - Remove balance of a player. (currencies.commands.remove)
 - /{currency-id} set {player} {amount} - Set balance for a player. (currencies.commands.set)
